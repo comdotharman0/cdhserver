@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+<link rel="stylesheet" href="style.css">
+</link>
+</head>
+<body>
+    <!-- JAI JAI SIYA RAM!  -->
+<header id="header1"><nav id="site-nav">
+<button id="nav-btn">
+<div></div>
+<div></div>
+<div></div>
+</button>
+<button id="save-btn">Save</button>
+<button id="run-btn">Run</button>
+</nav></header>
+<div id="navigation-panel" data-name='navigation' data-type='nav' class="hide-element">
+Nav</div>
+<form method="POST" action="/fileresponse67" >
+<input name="user" type="text" placeholder="Enter username" />
+<input name="pass" type="text" placeholder="Enter password" />
+<input type="submit" />
+<div id="non-navigation">
+<form method="POST">
+<h1 id="cwd" >Path /<span id="total-path"></span></h1>
+<!--<input id="path" name="path" type="url" />
+<div><select id="selected" name="selected">
+</select>
+</div>-->
+<textarea id="nano" name="nano" rows="40" cols="40">
+</textarea>
+<!--<textarea id="terminal" name="terminal" rows="40" cols="40">
+ </textarea>-->
+<div id="terminal">
+<div id="history"></div>
+<input id="commands" name="terminal" type="text" />
+</div>
+</form></div><script>
+
+window.MyConstants={
+"url":"/fileresponse"
+}
+</script>
+<script src="script.js"
+ defer >
+</script>
+</body>
+</html>
+
+

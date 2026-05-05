@@ -1,0 +1,126 @@
+use std::{net::{TcpStream,TcpListener},
+io::{Error,Write,BufReader,prelude::*},
+fs,process::Command};
+use std::collections::HashMap;
+mod requestparser;
+//use requestparser;
+#[derive(Debug)]
+pub struct WebServer
+{
+pub pages: HashMap<String,String>
+//pub pages:  Vec<PageRoute>
+}
+#[derive(Debug)]
+pub struct PageRoute
+{
+pub page_path:String,
+pub page_content: String
+}
+impl WebServer
+{
+pub fn new()->Self{
+WebServer{
+pages: HashMap::new()
+}
+}
+pub fn route(&mut self,page_path:&str,
+file_path:&str)->Result<(),Error>{
+self.pages.insert(
+page_path.to_string(),
+fs::read_to_string(file_path)?
+);
+//println!("{:#?}",self.pages);
+/*self.pages.push(
+PageRoute{
+page_path:page_path.to_string(),
+page_content: fs::read_to_string(file_path)?
+
+});*/
+Ok(())
+}
+
+pub fn run_command(&self,command:&str)->
+Result<String,Error>{
+let command: Vec<_>= command
+.split_whitespace()
+.collect();
+let output = Command::new(&command[0])
+.args(&command[1..]).output()?;
+Ok(String::from_utf8(output.stdout)
+.expect("invalid characters"))
+
+}
+
+pub fn handle_connections(&self,mut stream:TcpStream)->
+Result<(),Error>{ 
+
+/*let content = fs::read_to_string(
+"src/templates/index.html")?;
+*/
+let buf_reader = BufReader::new(&stream);
+ let http_request = buf_reader
+   .lines().next().unwrap()?;
+
+//    println!("Request: {:#?}",http_request);  
+
+let reqparser = requestparser::RequestParser{
+request:http_request};
+let reqpar = reqparser.parse();
+
+stream.write_all(
+format!(
+"HTTP/1.1 200 OK \r\n\r\n{}",self.pages.get(
+reqpar.url).map(|s| s.as_str())
+        .unwrap_or("404 Not Found"))
+.as_bytes())?;
+
+
+/*
+for i in self.pages.iter(){
+if &(reqpar.url.to_string())==&i.page_path{
+stream.write_all(
+format!(
+"HTTP/1.1 200 OK \r\n\r\n{}",&i.page_content)
+.as_bytes())?;
+}
+};*/
+println!("{:#?}",&reqpar);
+/*
+let page_path = reqpar.url;
+println!("{:#?}",&reqpar);
+match page_path{
+"/formresponse"=>{
+let content= fs::read_to_string(
+"src/templates/formresponse.html")?;
+stream.write_all(
+format!(
+"HTTP/1.1 200 OK \r\n\r\n{content}").as_bytes())?;
+},
+_ => {
+stream.write_all(
+format!(
+"HTTP/1.1 200 OK \r\n\r\n{content}\r\n").as_bytes())?;
+}
+};*/
+Ok(())
+}
+
+
+pub fn run(&self,addr:&str)->Result<(),Error>{
+let listener = TcpListener::bind(addr)?;
+println!("Running on address {addr}!");
+for stream in listener.incoming(){
+self.handle_connections(stream?)?;
+}
+Ok(())
+
+}
+
+
+
+
+
+
+}
+
+
