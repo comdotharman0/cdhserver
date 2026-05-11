@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "RustWebServer"
+name = "cdhserver"
 version = "0.1.0"
